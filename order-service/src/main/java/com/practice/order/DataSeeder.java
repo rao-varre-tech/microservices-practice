@@ -16,7 +16,7 @@ public class DataSeeder implements CommandLineRunner {
     public void run(String... args) {
         if (users.count() > 0) return;
         AppUser u = new AppUser();
-        u.name = "Test User";   // id 1
+        u.name = "Test User1";   // id 1
         users.save(u);
     }
 }
