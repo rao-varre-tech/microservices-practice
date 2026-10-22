@@ -25,6 +25,7 @@ steps:
       - ${_SERVICE}
       - --image=${_REGION}-docker.pkg.dev/$PROJECT_ID/microservices/${_SERVICE}:$SHORT_SHA
       - --region=${_REGION}
+      - --allow-unauthenticated
 
 options:
   logging: CLOUD_LOGGING_ONLY
