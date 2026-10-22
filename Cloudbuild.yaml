@@ -1,4 +1,4 @@
-# One pipeline file for all three services.
+# One pipeline file for all three services...
 # Each Cloud Build trigger sets _SERVICE (inventory-service, order-service or payment-service).
 substitutions:
   _SERVICE: inventory-service
