@@ -1,0 +1,30 @@
+# One pipeline file for all three services.
+# Each Cloud Build trigger sets _SERVICE (inventory-service, order-service or payment-service).
+substitutions:
+  _SERVICE: inventory-service
+  _REGION: asia-south1
+
+steps:
+  # 1) Build the image with Jib and push it to Artifact Registry, tagged with the git commit
+  - id: build-and-push-image
+    name: mirror.gcr.io/library/maven:3.9-eclipse-temurin-17
+    dir: ${_SERVICE}
+    entrypoint: mvn
+    args:
+      - compile
+      - jib:build
+      - -Dimage=${_REGION}-docker.pkg.dev/$PROJECT_ID/microservices/${_SERVICE}:$SHORT_SHA
+
+  # 2) Deploy that image. Existing settings (env vars, service account, scaling) are kept.
+  - id: deploy
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - ${_SERVICE}
+      - --image=${_REGION}-docker.pkg.dev/$PROJECT_ID/microservices/${_SERVICE}:$SHORT_SHA
+      - --region=${_REGION}
+
+options:
+  logging: CLOUD_LOGGING_ONLY

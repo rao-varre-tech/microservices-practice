@@ -1,0 +1,50 @@
+### Works with the VS Code "REST Client" extension (click "Send Request").
+### Otherwise copy into Postman.
+
+### 1. Inventory: list products (Laptop=1 at 60000, Mouse=2 at 500)
+GET http://localhost:8082/products
+
+### 2. Inventory: add a product
+POST http://localhost:8082/products
+Content-Type: application/json
+
+{ "name": "Keyboard", "price": 1500, "stock": 25 }
+
+### 3. Inventory: set stock for product 2
+PUT http://localhost:8082/inventory/2?quantity=50
+
+### 4. Order service: list users (user 1 is seeded)
+GET http://localhost:8081/users
+
+### 5. Order service: create a user
+POST http://localhost:8081/users
+Content-Type: application/json
+
+{ "name": "Asha" }
+
+### 6. Place an order that SUCCEEDS (2 mice = 1000)
+POST http://localhost:8081/orders
+Content-Type: application/json
+
+{ "userId": 1, "productId": 2, "quantity": 2 }
+
+### 7. Place an order that FAILS payment (1 laptop = 60000, rule: fail above 50000)
+POST http://localhost:8081/orders
+Content-Type: application/json
+
+{ "userId": 1, "productId": 1, "quantity": 1 }
+
+### 8. Place an order with too much quantity (expect 409 from inventory)
+POST http://localhost:8081/orders
+Content-Type: application/json
+
+{ "userId": 1, "productId": 2, "quantity": 9999 }
+
+### 9. Check orders (status moves PENDING_PAYMENT -> PAID or PAYMENT_FAILED)
+GET http://localhost:8081/orders
+
+### 10. Check payments
+GET http://localhost:8083/payments
+
+### 11. Check stock again (laptop stock returns after the failed payment)
+GET http://localhost:8082/products

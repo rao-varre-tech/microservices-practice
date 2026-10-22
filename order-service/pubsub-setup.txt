@@ -1,0 +1,40 @@
+# Creates the Pub/Sub emulator topics and subscriptions, then lists them.
+# Run (with the emulator already running):  curl.exe -K pubsub-setup.txt
+
+# ---- topics ----
+url = "http://localhost:8085/v1/projects/local-project/topics/order-created"
+request = "PUT"
+header = "Content-Type: application/json"
+data = "{}"
+write-out = "\n"
+next
+
+url = "http://localhost:8085/v1/projects/local-project/topics/payment-completed"
+request = "PUT"
+header = "Content-Type: application/json"
+data = "{}"
+write-out = "\n"
+next
+
+# ---- subscriptions ----
+url = "http://localhost:8085/v1/projects/local-project/subscriptions/order-created-payment-sub"
+request = "PUT"
+header = "Content-Type: application/json"
+data = "{\"topic\":\"projects/local-project/topics/order-created\"}"
+write-out = "\n"
+next
+
+url = "http://localhost:8085/v1/projects/local-project/subscriptions/payment-completed-order-sub"
+request = "PUT"
+header = "Content-Type: application/json"
+data = "{\"topic\":\"projects/local-project/topics/payment-completed\"}"
+write-out = "\n"
+next
+
+# ---- verify ----
+url = "http://localhost:8085/v1/projects/local-project/topics"
+write-out = "\n"
+next
+
+url = "http://localhost:8085/v1/projects/local-project/subscriptions"
+write-out = "\n"
