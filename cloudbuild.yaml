@@ -7,7 +7,7 @@ substitutions:
 steps:
   # 1) Build the image with Jib and push it to Artifact Registry, tagged with the git commit
   - id: build-and-push-image
-    name: mirror.gcr.io/library/maven:3.9-eclipse-temurin-17
+    name: mirror.gcr.io/library/maven:3.9-eclipse-temurin-21
     dir: ${_SERVICE}
     entrypoint: mvn
     args:
