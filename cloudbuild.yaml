@@ -1,7 +1,8 @@
-# One pipeline file for all three services...
-# Each Cloud Build trigger sets _SERVICE (inventory-service, order-service or payment-service).
+# One pipeline file for all three services.
+# Each Cloud Build trigger must set these substitution variables:
+#   _SERVICE = inventory-service | order-service | payment-service
+#   _SA      = inventory-sa      | order-sa      | payment-sa
 substitutions:
-  _SERVICE: inventory-service
   _REGION: asia-south1
 
 steps:
@@ -15,18 +16,29 @@ steps:
       - jib:build
       - -Dimage=${_REGION}-docker.pkg.dev/$PROJECT_ID/microservices/${_SERVICE}:$SHORT_SHA
 
-  # 2) Deploy that image. Existing settings (env vars, service account, scaling) are kept.
+  # 2) Deploy that image with the right identity and environment variables
   - id: deploy
     name: gcr.io/google.com/cloudsdktool/cloud-sdk
-    entrypoint: gcloud
+    entrypoint: bash
     args:
-      - run
-      - deploy
-      - ${_SERVICE}
-      - --image=${_REGION}-docker.pkg.dev/$PROJECT_ID/microservices/${_SERVICE}:$SHORT_SHA
-      - --region=${_REGION}
-      - --allow-unauthenticated
-      - --service-account=${_SA}@$PROJECT_ID.iam.gserviceaccount.com
+      - -c
+      - |
+        case "${_SERVICE}" in
+          order-service)
+            ENV_VARS="INVENTORY_URL=https://inventory-service-$PROJECT_NUMBER.${_REGION}.run.app,SPRING_CLOUD_GCP_PROJECT_ID=$PROJECT_ID" ;;
+          payment-service)
+            ENV_VARS="SPRING_CLOUD_GCP_PROJECT_ID=$PROJECT_ID" ;;
+          *)
+            ENV_VARS="" ;;
+        esac
+        EXTRA=""
+        if [ -n "$$ENV_VARS" ]; then EXTRA="--update-env-vars=$$ENV_VARS"; fi
+        gcloud run deploy ${_SERVICE} \
+          --image=${_REGION}-docker.pkg.dev/$PROJECT_ID/microservices/${_SERVICE}:$SHORT_SHA \
+          --region=${_REGION} \
+          --allow-unauthenticated \
+          --service-account=${_SA}@$PROJECT_ID.iam.gserviceaccount.com \
+          $$EXTRA
 
 options:
   logging: CLOUD_LOGGING_ONLY
