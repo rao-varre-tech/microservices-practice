@@ -20,7 +20,7 @@ public class DataSeeder implements CommandLineRunner {
     public void run(String... args) {
         if (products.count() > 0) return;
         add("Laptop", new BigDecimal("60000"), 10);   // id 1 (expensive: payment will FAIL in the demo)
-        add("MultiMedia Mouse", new BigDecimal("500"), 100);     // id 2 (payment will succeed)
+        add("Multi Mouse", new BigDecimal("500"), 100);     // id 2 (payment will succeed)
     }
 
     private void add(String name, BigDecimal price, int stock) {

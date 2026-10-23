@@ -11,5 +11,5 @@ public class Payment {
     public Long id;
     public Long orderId;
     public BigDecimal amount;
-    public String status;   // SUCCESS or FAILED ...
+    public String status;   // SUCCESS or FAILED
 }
