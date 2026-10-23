@@ -26,6 +26,7 @@ steps:
       - --image=${_REGION}-docker.pkg.dev/$PROJECT_ID/microservices/${_SERVICE}:$SHORT_SHA
       - --region=${_REGION}
       - --allow-unauthenticated
+      - --service-account=${_SA}@$PROJECT_ID.iam.gserviceaccount.com
 
 options:
   logging: CLOUD_LOGGING_ONLY
