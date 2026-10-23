@@ -20,7 +20,7 @@ public class EventPublisher {
         try {
             pubSub.publish(topic, mapper.writeValueAsString(event));
         } catch (JsonProcessingException e) {
-            throw new IllegalStateException("Could not serialize event", e);
+            throw new IllegalStateException("Could not serialize event..", e);
         }
     }
 }
